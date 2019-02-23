@@ -15,8 +15,8 @@
 #define AVE     (M/N)       //每个子线程处理的整数个数
 
 // long long     *sum = NULL;    //保存各个子线程计算的结果
-long long M;
-int N;
+// long long M;
+// int N;
 
 // 获取当前时间
 double get_time() {
@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
     double      t1, t2;
     // 开始计时
     t1 = get_time();
-
+    long M = 0,N = 0;
     // 进行计算
     // long block_num = M/N;
     unsigned long extra  = N == 1 ? M : M%N;
@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
          * 2. 新建共享内存大小
          * 3. 如果内核中不存在键值与key相等的共享内存，则新建一个消息队列
          */
-        int shmid = shmget((key_t)999, 8, IPC_CREAT|0666);
+        int shmid = shmget((key_t)2333, 8, IPC_CREAT|0666);
         void *p_addr = shmat(shmid, NULL, 0);
         if(p_addr == (void*)-1){
             printf("FAIL to create memory\n");
