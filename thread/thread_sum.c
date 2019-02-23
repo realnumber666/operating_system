@@ -21,21 +21,21 @@ double get_time()
 //求和子线程
 void* sum_work(void* arg)
 {
-    int i=*((int*)arg);   //第i个线程
-    long long start;
-    long long end;
-    
+    int            n = (int)arg;  //第n部分
+    long long      start = n*AVE+1;
+    long long      end;
+    long long      i;
+    sum[n] = 0;
 
-    start=i*AVE+1;
-    if(i<N-1)
+    if(n < N-1)
         end=start+AVE-1;
     else
         end=M;
-    
-    sum[i]=0;
-    long long j;
-    for(j=start;j<=end;j++)
-        sum[i]+=j;
+
+    //计算start ~ end 范围的整数和
+    for(i = start; i <= end; i++) {
+        sum[n] = sum[n] + i;
+    }
     pthread_exit(0);
 }
 
