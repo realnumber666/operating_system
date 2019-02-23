@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
 
         // 结束
         t2 = get_time();
-        printf("time use: %ld\n", t2 - t1);
+        printf("time use: %f\n", t2 - t1);
         printf("result:%ld\n", *sum);
 
         // destory share memery
