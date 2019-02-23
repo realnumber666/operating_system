@@ -78,12 +78,12 @@ int sum_work(long N, long M){
 }
 
 int main(int argc, char *argv[]) {
+    long M = 0,N = 0;
     scanf("N = %d\n", &N);
     scanf("M = %lld", &M);
     double      t1, t2;
     // 开始计时
     t1 = get_time();
-    long M = 0,N = 0;
     // 进行计算
     // long block_num = M/N;
     unsigned long extra  = N == 1 ? M : M%N;
