@@ -114,22 +114,22 @@ int main(int argc, char *argv[]) {
         pthread_mutex_init(&mutex, NULL);
         /**
          * 共享内存
-         * 1. 
+         * 1. 建立新共享内存对象
          * 2. 新建共享内存大小
+         * 3. 如果内核中不存在键值与key相等的共享内存，则新建一个消息队列
          */
-        int shmid = shmget((key_t)2333, 8, IPC_CREAT|0666);
+        int shmid = shmget((key_t)999, 8, IPC_CREAT|0666);
         void *p_addr = shmat(shmid, NULL, 0);
         if(p_addr == (void*)-1){
-            printf("create shared memery fail\n");
+            printf("FAIL to create memory\n");
             exit(1);
         }
         sum = (unsigned long*)p_addr;
 
-        // wait child process exit
+        // 父进程执行
         waitpid(pid, NULL, 0);
-        printf("child is exit\n");
 
-        // get end time
+        // 结束
         t2 = get_time();
         printf("time use: %ld\n", t2 - t1);
         printf("result:%ld\n", *sum);
