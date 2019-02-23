@@ -24,11 +24,11 @@ double get_time() {
     return t.tv_sec + t.tv_usec/1000000.0;
 }
 
-struct struct_zone_data{
+struct Data_segment{
     unsigned long start;
     unsigned long end;
 };
-struct struct_zone_data zone_data[20];
+struct Data_segment data_segment[20];
 
 
 
@@ -39,7 +39,7 @@ int sum_work(long N, long M){
         pid_t pid = fork();
         if(pid == 0){
             unsigned long local_sum = 0;
-            for(unsigned long start = zone_data[process].start; start <= zone_data[process].end; start++){
+            for(unsigned long start = data_segment[process].start; start <= data_segment[process].end; start++){
                 local_sum += start;
             }
 
@@ -83,12 +83,12 @@ int main(int argc, char *argv[]) {
     unsigned start_num = 1;
     for(int i = 0; i < N; i++) {
         if(i < extra) {
-            zone_data[i].start = start_num;
-            zone_data[i].end = (start_num + AVE) <= M ? (start_num + AVE) : M;
+            data_segment[i].start = start_num;
+            data_segment[i].end = (start_num + AVE) <= M ? (start_num + AVE) : M;
             start_num += AVE + 1;
         } else {
-            zone_data[i].start = start_num;
-            zone_data[i].end = (start_num + AVE - 1) <= M ? (start_num + AVE -1) : M;
+            data_segment[i].start = start_num;
+            data_segment[i].end = (start_num + AVE - 1) <= M ? (start_num + AVE -1) : M;
             start_num += AVE;
         }
     }
