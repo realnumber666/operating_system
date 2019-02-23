@@ -14,7 +14,7 @@
 #define N_MAX     200           //创建N 个子线程求和
 #define AVE     (M/N)       //每个子线程处理的整数个数
 
-long long     *sum = NULL;    //保存各个子线程计算的结果
+// long long     *sum = NULL;    //保存各个子线程计算的结果
 long long M;
 int N;
 
@@ -25,11 +25,11 @@ double get_time() {
     return t.tv_sec + t.tv_usec/1000000.0;
 }
 
-// struct struct_zone_data{
-//     unsigned long start;
-//     unsigned long end;
-// };
-// struct struct_zone_data zone_data[20];
+struct struct_zone_data{
+    unsigned long start;
+    unsigned long end;
+};
+struct struct_zone_data zone_data[20];
 
 unsigned long *sum = NULL;
 pthread_mutex_t mutex;
