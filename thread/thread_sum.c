@@ -37,36 +37,50 @@ void* sum_work(void* arg)
 
 int main()
 {
+    scanf("N = %d\n", &N);
+    scanf("M = %lld", &M);
+    
     double         t1,t2;
     pthread_t      *pthread_id = NULL; //保存子线程id
     int            i;
-    long long      result = 0;         //总和
+    long long      common_result = 0;         //总和
 
+    // 分配空间
     pthread_id = (pthread_t*)malloc(N * sizeof(pthread_t));
     sum  = (long long*)malloc(N * sizeof(long long));
 
-    //开始计算
+    // 开始计时
     t1 = get_time();
 
     //创建N个子线程
-    for(i=0;i<N;i++)
-    {
-        pthread_create(pthread_id+i,NULL,sum_work,i);
+    for(i = 0; i < N; i++) {
+        /**
+         * 参数说明：
+         * 1. 线程标识符指针
+         * 2. 线程属性
+         * 3. 线程运行函数
+         * 4. 运行函数的参数 
+         */
+        pthread_create(pthread_id+i, NULL, sum_work, i);
     }
 
-    //将各个子线程的求和结果综合到一起
-    for(i=0;i<N;i++)
-    {
+    //将各个子线程的求和结果相加
+    for(i = 0; i < N; i++) {
         //等待子线程结束，如果该子线程已经结束，则立即返回
-        pthread_join(pthread_id[i],NULL);
-        result += sum[i];
+        /**
+         * 参数说明：
+         * 1. 线程标识
+         * 2. 存储该线程返回值
+         */
+        pthread_join(pthread_id[i], NULL);
+        common_result += sum[i];
     }
 
     //求和结束
     t2 = get_time();
 
     //输出求和结果和运行时间
-    printf("sum of 1 ~ %lld is %lld runtime is %f\n",(long long)MAX,result,t2-t1);
+    printf("result is %lld , runtime is %f\n", common_result, t2-t1);
 
     free(pthread_id);
     free(sum);
