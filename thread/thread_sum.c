@@ -11,8 +11,7 @@ long long     *sum = NULL;    //保存各个子线程计算的结果
 long long M;
 int N;
 //获取当前时间
-double get_time()
-{
+double get_time() {
     struct timeval t;
     gettimeofday(&t,NULL);
     return t.tv_sec + t.tv_usec/1000000.0;
@@ -44,7 +43,7 @@ int main()
     scanf("N = %d\n", &N);
     scanf("M = %lld", &M);
     
-    double         t1,t2;
+    double         t1, t2;
     pthread_t      *pthread_id = NULL; //保存子线程id
     int            i;
     long long      common_result = 0;         //总和
