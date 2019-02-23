@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
 #include <unistd.h>
+#include <sys/time.h>
 #include <sys/wait.h>
-#include <stdbool.h>
 #include <sys/shm.h>
+#include <stdbool.h>
 #include <pthread.h>
 
 // #define OUTPUT_PATH "output.txt"
@@ -14,9 +14,8 @@
 #define N_MAX     200           //创建N 个子线程求和
 #define AVE     (M/N)       //每个子线程处理的整数个数
 
-// long long     *sum = NULL;    //保存各个子线程计算的结果
-// long long M;
-// int N;
+unsigned long *sum = NULL;
+pthread_mutex_t mutex;
 
 // 获取当前时间
 double get_time() {
@@ -31,24 +30,20 @@ struct struct_zone_data{
 };
 struct struct_zone_data zone_data[20];
 
-unsigned long *sum = NULL;
-pthread_mutex_t mutex;
+
+
 
 int sum_work(long N, long M){
     int process = 0;
     while(true){
         pid_t pid = fork();
         if(pid == 0){
-            // child process
-            // calculate and exit
-            //printf("child : %d\n", process);
-            //printf("calculate zone : %u ~ %u\n", zone_data[process].start, zone_data[process].end);
             unsigned long local_sum = 0;
             for(unsigned long start = zone_data[process].start; start <= zone_data[process].end; start++){
                 local_sum += start;
             }
 
-            // add local sum to sum
+            // 通过共享内存求和
             pthread_mutex_lock(&mutex);
             int shmid = shmget((key_t)2333, 8, IPC_CREAT|0666);
             void *p_addr = shmat(shmid, NULL, 0);
@@ -58,13 +53,10 @@ int sum_work(long N, long M){
             }
             sum = (unsigned long*)p_addr;
             *sum = *sum + local_sum;
-            //printf("add: %ld\nnow: %ld\n", local_sum, *sum);
             pthread_mutex_unlock(&mutex);
             exit(0);
         }else{
-            // parents process
-            //printf("parent process: child pid: %d\n", pid);
-            // run until
+            // 父进程执行
             ++process;
             if(process > N - 1){
                 // wait all child process exit
@@ -82,10 +74,11 @@ int main(int argc, char *argv[]) {
     scanf("N = %d\n", &N);
     scanf("M = %lld", &M);
     double      t1, t2;
+
     // 开始计时
     t1 = get_time();
+    
     // 进行计算
-    // long block_num = M/N;
     unsigned long extra  = N == 1 ? M : M%N;
     unsigned start_num = 1;
     for(int i = 0; i < N; i++) {
@@ -102,15 +95,12 @@ int main(int argc, char *argv[]) {
 
     pid_t pid = fork();
     if(pid < 0) {
-        printf("pid < 0 error!!\n");
+        printf("FAIL to create pid!!\n");
         exit(1);
     } else if (pid == 0){
-        // printf("child process\n");
         sum_work(N, M);
         exit(0);
     } else {
-        // printf("parent process\n");
-        // init lock and create shared memery
         pthread_mutex_init(&mutex, NULL);
         /**
          * 共享内存
@@ -134,7 +124,7 @@ int main(int argc, char *argv[]) {
         printf("time use: %f\n", t2 - t1);
         printf("result:%ld\n", *sum);
 
-        // destory share memery
+        // 释放共享内存
         shmdt(sum);
         shmctl(shmid, IPC_RMID, NULL);
     }
